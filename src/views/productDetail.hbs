@@ -1,0 +1,16 @@
+<div class="border border-slate-500 w-2/6 p-2 mx-auto mt-20">
+  <div class="p-5">
+     {{!-- {{#each thumbnails}}
+      <img class="w-full h-3/6 bg-cover" src="{{this}}" alt="imagen-1">
+    {{/each}} --}}
+
+    <h2 class="uppercase font-bold">{{ title }}</h2>
+    <p>{{ description }}</p>
+    <p class="font-bold">Precio: ${{ price }}</p>
+    <p class="font-bold">Cantidad: {{ stock }}</p>
+    <p class="font-bold">Categoría: {{ category }}</p>
+  </div>
+  <div class="flex justify-center gap-10">
+    <a class="border border-2 rounded p-1 text-sky-600 hover:text-sky-900 duration-300" href="/products">Volver al inicio</a>
+  </div>
+</div>
