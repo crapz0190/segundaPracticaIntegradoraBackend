@@ -158,8 +158,11 @@ export const resetPassword = (req, res) => {
 
 // Metodo GET para mostrar error
 export const failureRedirect = (req, res) => {
+  // console.log("sessions", req);
+  const message = req.session.messages[0];
   res.render("error", {
     title: "Error | Handlebars",
+    message: message,
   });
 };
 

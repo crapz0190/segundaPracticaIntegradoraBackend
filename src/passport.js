@@ -2,7 +2,7 @@ import passport from "passport";
 import { usersManager } from "./db/managers/usersManager.js";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GitHubStrategy } from "passport-github2";
-import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
+import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { hashData, compareData } from "./utils.js";
 import env from "./dotenv.js";
 
@@ -15,7 +15,7 @@ passport.use(
       const { first_name, last_name } = req.body;
 
       if (!first_name || !last_name || !email || !password) {
-        return done(null, false);
+        return done(null, false, { message: "All fields are required" });
       }
 
       try {
@@ -27,8 +27,8 @@ passport.use(
         });
 
         return done(null, createdUser);
-      } catch (e) {
-        return done(e);
+      } catch (error) {
+        return done(error);
       }
     }
   )
@@ -40,23 +40,23 @@ passport.use(
     { passReqToCallback: true, usernameField: "email" },
     async (req, email, password, done) => {
       if (!email || !password) {
-        return done(null, false);
+        return done(null, false, { message: "All fields are required" });
       }
 
       try {
         const user = await usersManager.findByEmail(email);
         if (!user) {
-          return done(null, false);
+          return done(null, false, { message: "Incorrect email or password" });
         }
 
         const isPasswordValid = await compareData(password, user.password);
         if (!isPasswordValid) {
-          return done(null, false);
+          return done(null, false, { message: "Incorrect email or password" });
         }
 
         return done(null, user);
-      } catch (e) {
-        return done(e);
+      } catch (error) {
+        return done(error);
       }
     }
   )
@@ -67,19 +67,20 @@ const fromCookies = (req) => {
   return req.cookies.token;
 };
 
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromExtractors([fromCookies]),
+  secretOrKey: env.TOKEN_SECRET,
+};
+
 passport.use(
-  "jwt",
-  new JWTStrategy(
-    {
-      // jwtFromRequest: ExtractJwt.fromExtractors([fromCookies]),
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken,
-      secretOrKey: env.TOKEN_SECRET,
-    },
-    async (jwt_payload, done) => {
-      console.log(jwt_payload);
-      done(null, jwt_payload);
+  "current",
+  new JWTStrategy(jwtOptions, (jwt_payload, done) => {
+    try {
+      return done(null, jwt_payload);
+    } catch (error) {
+      return done(error);
     }
-  )
+  })
 );
 
 // -------------- GitHub ----------------

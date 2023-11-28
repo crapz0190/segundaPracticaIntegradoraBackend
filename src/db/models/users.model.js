@@ -16,10 +16,10 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
-  // age: {
-  //   type: Number,
-  //   required: true,
-  // },
+  age: {
+    type: Number,
+    required: true,
+  },
   password: {
     type: String,
   },
@@ -29,7 +29,7 @@ const userSchema = new Schema({
   },
   cart: {
     type: Schema.Types.ObjectId,
-    ref: "Products",
+    ref: "Carts",
   },
   role: {
     type: String,

@@ -3,10 +3,21 @@ import {
   destroySession,
   restorePassword,
 } from "../controllers/sessions.controllers.js";
-import passport from "passport";
+import { createAccessToken } from "../libs/jwt.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
+import passport from "passport";
 
 const router = Router();
+
+router.get(
+  "/current",
+  passport.authenticate("current", { session: false }),
+  authMiddleware(["user"]),
+  (req, res) => {
+    const user = req.user;
+    return res.json({ message: user });
+  }
+);
 
 // ruta GET permite desde un boton cerrar sesion
 router.get("/signout", destroySession);
@@ -28,12 +39,23 @@ router.post(
 // ruta POST permite el ingreso del usuario a su cuenta
 router.post(
   "/login",
-  passport.authenticate("jwt", { session: false }),
-  authMiddleware(["admin, user"]),
   passport.authenticate("login", {
-    successRedirect: "/products",
+    failureMessage: true,
     failureRedirect: "/error",
-  })
+    // successRedirect: "/products",
+  }),
+  (req, res) => {
+    try {
+      //jwt
+      const { first_name, last_name, email, role } = req.user;
+      const token = createAccessToken({ first_name, last_name, email, role });
+      res.cookie("token", token, { httpOnly: true });
+
+      return res.redirect("/api/sessions/current");
+    } catch (e) {
+      return res.status(500).json({ status: "error", message: e.message });
+    }
+  }
 );
 
 // ------------ SIGNUP - LOGIN - PASSPORT GITHUB ------------
@@ -52,5 +74,3 @@ router.get(
 );
 
 export default router;
-
-// 00:48:23 min video 23

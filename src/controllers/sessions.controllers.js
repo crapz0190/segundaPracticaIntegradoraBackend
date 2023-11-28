@@ -1,6 +1,6 @@
 import { usersManager } from "../db/managers/usersManager.js";
 import { hashData } from "../utils.js";
-// import { createAccessToken } from "../libs/jwt.js";
+import { createAccessToken } from "../libs/jwt.js";
 
 // Metodo GET permite desde un boton cerrar sesion
 export const destroySession = (req, res) => {
@@ -23,13 +23,15 @@ export const destroySession = (req, res) => {
 // };
 
 // Metodo POST permite el ingreso del usuario a su cuenta
-export const loginUser = async (req, res) => {
-  // const token = createAccessToken(req.user);
+export const loginUser = (req, res) => {
   try {
-    return res
+    //jwt
+    const { first_name, last_name, role } = req.user;
+    const token = createAccessToken({ first_name, last_name, role });
+    res
       .status(200)
-      .cookie("token", token, { maxAge: 60000, httpOnly: true })
-      .json({ message: "Welcome" });
+      .cookie("token", token, { httpOnly: true })
+      .json({ message: "Bienvenido", token });
   } catch (e) {
     return res.status(500).json({ status: "error", message: e.message });
   }
