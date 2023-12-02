@@ -1,5 +1,6 @@
 import passport from "passport";
 import { usersManager } from "./db/managers/usersManager.js";
+import { cartsManager } from "./db/managers/cartsManager.js";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
@@ -18,11 +19,14 @@ passport.use(
         return done(null, false, { message: "All fields are required" });
       }
 
+      const cart = await cartsManager.createCart();
+
       try {
         const hashPassword = await hashData(password);
         const createdUser = await usersManager.createOne({
           ...req.body,
           password: hashPassword,
+          cart: cart._id,
           // role: "admin",
         });
 

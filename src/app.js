@@ -69,18 +69,18 @@ io.on("connection", (socketServer) => {
     // console.log(data.productId);
     const pid = data.productId;
 
-    const idFound = await productsManager.findById(pid);
+    const idFound = await productsManager.getById(pid);
     socketServer.emit("loadListProducts", idFound);
   });
 
   socketServer.on("updateListProducts", async (update) => {
     const id = update.idProductForm;
-    await productsManager.updateProduct(id, update);
+    await productsManager.updateOne(id, update);
   });
 
   socketServer.on("idDeleteProducts", async (data) => {
     const pid = data.productId;
-    const deleteProduct = await productsManager.deleteProduct(pid);
+    const deleteProduct = await productsManager.deleteOne(pid);
     socketServer.emit("loadListProducts", deleteProduct);
   });
 
@@ -88,7 +88,7 @@ io.on("connection", (socketServer) => {
 
   // ------------------- inicio messages ---------------------
   socketServer.on("idUpdate", async (id) => {
-    const idFound = await messagesManager.findById(id);
+    const idFound = await messagesManager.getById(id);
     socketServer.emit("loadlist", idFound);
   });
 
@@ -112,7 +112,7 @@ io.on("connection", (socketServer) => {
     console.log(data.productId);
     const pid = data.productId;
     try {
-      const product = await productsModel.findById({ _id: pid });
+      const product = await productsModel.getById({ _id: pid });
       console.log("product--->", product);
     } catch (e) {
       console.error(e.message);

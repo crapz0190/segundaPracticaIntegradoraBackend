@@ -1,27 +1,21 @@
 import { Router } from "express";
-import {
-  listMessages,
-  messageById,
-  createMessages,
-  updateMessages,
-  deleteMessages,
-} from "../controllers/messages.controllers.js";
+import { messageController } from "../controllers/messages.controllers.js";
 
 const router = Router();
 
 // ruta GET para mostrar todos los mensages
-router.get("/", listMessages);
+router.get("/", messageController.listMessages);
 
 // ruta GET para mostrar mensage por ID
-router.get("/:mid", messageById);
+router.get("/:mid", messageController.messageById);
 
 // ruta POST para crear mensages
-router.post("/add", createMessages);
+router.post("/add", messageController.createMessages);
 
 // ruta PUT para actualizar mensages
-router.put("/:mid", updateMessages);
+router.put("/:mid", messageController.updateMessages);
 
 // ruta DELETE para eliminar mensages
-router.delete("/:mid", deleteMessages);
+router.delete("/:mid", messageController.deleteMessages);
 
 export default router;

@@ -1,27 +1,21 @@
 import { Router } from "express";
-import {
-  allCarts,
-  cartById,
-  createCart,
-  updateCart,
-  removeCart,
-} from "../controllers/carts.controllers.js";
+import { cartController } from "../controllers/carts.controllers.js";
 
 const router = Router();
 
 // ruta GET para mostrar todos los carritos
-router.get("/", allCarts);
+router.get("/", cartController.allCarts);
 
 // ruta GET para encontrar carritos por ID
-router.get("/:cid", cartById);
+router.get("/:cid", cartController.cartById);
 
 // ruta POST para crear un carrito
-router.post("/add", createCart);
+router.post("/add", cartController.createCart);
 
 // ruta PUT para agregar productos a un carrito
-router.put("/:cid/product/:pid", updateCart);
+router.put("/:cid/product/:pid", cartController.updateCart);
 
 // ruta DELETE para eliminar un carrito
-router.delete("/:cid", removeCart);
+router.delete("/:cid", cartController.removeCart);
 
 export default router;

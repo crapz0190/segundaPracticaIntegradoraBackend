@@ -1,10 +1,6 @@
 import { Router } from "express";
-import {
-  destroySession,
-  restorePassword,
-} from "../controllers/sessions.controllers.js";
-import { createAccessToken } from "../libs/jwt.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { sessionController } from "../controllers/sessions.controllers.js";
 import passport from "passport";
 
 const router = Router();
@@ -20,10 +16,10 @@ router.get(
 );
 
 // ruta GET permite desde un boton cerrar sesion
-router.get("/signout", destroySession);
+router.get("/signout", sessionController.destroySession);
 
 // ruta POST permite restaurar contraseña
-router.post("/restore", restorePassword);
+router.post("/restore", sessionController.restorePassword);
 
 // ------------ SIGNUP - LOGIN - PASSPORT LOCAL------------
 
@@ -44,18 +40,7 @@ router.post(
     failureRedirect: "/error",
     // successRedirect: "/products",
   }),
-  (req, res) => {
-    try {
-      //jwt
-      const { first_name, last_name, email, role } = req.user;
-      const token = createAccessToken({ first_name, last_name, email, role });
-      res.cookie("token", token, { httpOnly: true });
-
-      return res.redirect("/api/sessions/current");
-    } catch (e) {
-      return res.status(500).json({ status: "error", message: e.message });
-    }
-  }
+  sessionController.loginUser
 );
 
 // ------------ SIGNUP - LOGIN - PASSPORT GITHUB ------------
