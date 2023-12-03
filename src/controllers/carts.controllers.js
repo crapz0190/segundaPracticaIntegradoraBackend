@@ -1,4 +1,4 @@
-import { cartsManager } from "../db/managers/cartsManager.js";
+import { cartsManager } from "../dao/managers/cartsManager.js";
 // import { cartsModel } from "../db/models/carts.model.js";
 
 class CartController {

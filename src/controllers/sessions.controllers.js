@@ -1,4 +1,4 @@
-import { usersManager } from "../db/managers/usersManager.js";
+import { usersManager } from "../dao/managers/usersManager.js";
 import { hashData } from "../utils.js";
 import { generateToken } from "../libs/jwt.js";
 

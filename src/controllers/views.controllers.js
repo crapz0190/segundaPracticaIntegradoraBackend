@@ -1,6 +1,6 @@
 /* eslint-disable no-dupe-keys */
-import { productsManager } from "../db/managers/productsManager.js";
-import { messagesManager } from "../db/managers/messagesManager.js";
+import { productsManager } from "../dao/managers/productsManager.js";
+import { messagesManager } from "../dao/managers/messagesManager.js";
 
 class ViewsControllers {
   // Metodo GET para visualizar mensages
@@ -10,6 +10,25 @@ class ViewsControllers {
       return res.render("messages", {
         title: "Messages | Handlebars",
         messages: getMessages,
+      });
+    } catch (e) {
+      return res.status(500).json({ status: "error", message: e.message });
+    }
+  };
+
+  // ruta GET para enviar actualizacion de los mensages
+  renderEditMessage = async (req, res) => {
+    const { mid } = req.params;
+
+    try {
+      const messages = await messagesManager.getById(mid);
+      const { _id, email, description } = messages;
+
+      return res.render("updateMessages", {
+        title: "Update Form | Handlebars",
+        _id,
+        email,
+        description,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -120,6 +139,10 @@ class ViewsControllers {
 
   // Metodo GET para visualizar login
   login = (req, res) => {
+    if (req.session.passport) {
+      return res.redirect("/products");
+    }
+
     try {
       return res.render("login", {
         title: "Login | Handlebars",
@@ -131,6 +154,10 @@ class ViewsControllers {
 
   // Metodo GET para visualizar signup
   signup = (req, res) => {
+    if (req.session.passport) {
+      return res.redirect("/products");
+    }
+
     try {
       return res.render("signup", {
         title: "Sign Up | Handlebars",

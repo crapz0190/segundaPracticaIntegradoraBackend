@@ -8,7 +8,7 @@ const router = Router();
 router.get(
   "/current",
   passport.authenticate("current", { session: false }),
-  authMiddleware(["admin"]),
+  authMiddleware(["user"]),
   sessionController.access
 );
 

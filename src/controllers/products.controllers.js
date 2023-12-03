@@ -1,4 +1,4 @@
-import { productsManager } from "../db/managers/productsManager.js";
+import { productsManager } from "../dao/managers/productsManager.js";
 
 class ProductController {
   // Metodo GET para mostrar productos por paginado

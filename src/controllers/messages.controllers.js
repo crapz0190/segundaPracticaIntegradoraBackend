@@ -1,4 +1,4 @@
-import { messagesManager } from "../db/managers/messagesManager.js";
+import { messagesManager } from "../dao/managers/messagesManager.js";
 
 class MessageController {
   // Metodo GET para mostrar todos los mensajes
@@ -10,7 +10,9 @@ class MessageController {
           .status(404)
           .json({ status: "error", message: "Messages not found" });
       } else {
-        return res.status(200).json({ status: "success", payload: messages });
+        return res
+          .status(200)
+          .json({ status: "Message list", payload: messages });
       }
     } catch (e) {
       return res.status(500).json({ status: "error", error: e.message });
@@ -21,13 +23,15 @@ class MessageController {
   messageById = async (req, res) => {
     const { mid } = req.params;
     try {
-      const messages = await messagesManager.findById(mid);
+      const messages = await messagesManager.getById(mid);
       if (!messages) {
         return res
           .status(404)
           .json({ status: "error", message: "Messages not found" });
       } else {
-        return res.status(200).json({ status: "success", payload: messages });
+        return res
+          .status(200)
+          .json({ status: "Message found", payload: messages });
       }
     } catch (e) {
       return res.status(500).json({ status: "error", error: e.message });
@@ -54,7 +58,7 @@ class MessageController {
       } else {
         return res
           .status(200)
-          .json({ status: "success", payload: messageCreated });
+          .json({ status: "Created", payload: messageCreated });
       }
     } catch (e) {
       return res.status(500).json({ status: "error", error: e.message });
@@ -82,7 +86,7 @@ class MessageController {
       } else {
         return res
           .status(200)
-          .json({ status: "success", payload: messageUpdated });
+          .json({ status: "Updated", payload: messageUpdated });
       }
     } catch (e) {
       return res.status(500).json({ status: "error", error: e.message });
@@ -102,7 +106,7 @@ class MessageController {
       } else {
         return res
           .status(200)
-          .json({ status: "success", payload: messageRemoved });
+          .json({ status: "Deleted", payload: messageRemoved });
       }
     } catch (e) {
       return res.status(500).json({ status: "error", error: e.message });

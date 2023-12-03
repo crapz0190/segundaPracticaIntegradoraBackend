@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { viewController } from "../controllers/views.controllers.js";
+import { messagesManager } from "../dao/managers/messagesManager.js";
 
 const router = Router();
 
@@ -29,6 +30,9 @@ router.get("/update-product", viewController.updateProduct);
 
 // ruta GET para visualizar los mensages
 router.get("/messages-form", viewController.listMessages);
+
+// ruta GET para actualizar los mensages
+router.get("/messages/:mid", viewController.renderEditMessage);
 
 // ruta GET para visualizar creacion exitosa del producto
 router.get("/successful", viewController.successfulCreation);
