@@ -1,6 +1,7 @@
 /* eslint-disable no-dupe-keys */
 import { productsManager } from "../dao/managers/productsManager.js";
 import { messagesManager } from "../dao/managers/messagesManager.js";
+import { cartsManager } from "../dao/managers/cartsManager.js";
 
 class ViewsControllers {
   // Metodo GET para visualizar mensages
@@ -41,7 +42,11 @@ class ViewsControllers {
       return res.redirect("/login");
     }
 
-    const { first_name, email } = req.user;
+    const { first_name, email, cart } = req.user;
+
+    const idFound = await cartsManager.getById(cart);
+    const idCart = idFound._id;
+    // console.log("id see", idCart);
 
     try {
       const products = await productsManager.paginate(req.query);
@@ -71,6 +76,7 @@ class ViewsControllers {
         nextLink,
         first_name,
         email,
+        idCart,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -191,6 +197,14 @@ class ViewsControllers {
   // Metodo GET para visualizar creacion exitosa del producto
   successfulCreation = (req, res) => {
     res.render("successful");
+  };
+
+  // Metodo GET para visualizar carrito de productos
+  productCart = (req, res) => {
+    // console.log(req.params);
+    res.render("productCart", {
+      title: "Product Cart | Handlebars",
+    });
   };
 }
 

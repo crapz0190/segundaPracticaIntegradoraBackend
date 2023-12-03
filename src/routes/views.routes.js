@@ -16,6 +16,9 @@ router.get("/restore", viewController.resetPassword);
 // ruta GET para mostrar error
 router.get("/error", viewController.failureRedirect);
 
+// ruta GET para mostrar carrito
+router.get("/carts/:cid/product/:pid", viewController.productCart);
+
 // ruta GET para mostrar productos
 router.get("/products", viewController.listProducts);
 

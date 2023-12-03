@@ -42,7 +42,7 @@ class ServerConfig {
           mongoUrl: env.URI,
         }),
         secret: env.TOKEN_SECRET_MONGO,
-        cookie: { maxAge: 60000 },
+        cookie: { maxAge: 3600000 },
         // saveUninitialized: false,
       })
     );
