@@ -66,14 +66,14 @@ passport.use(
   )
 );
 
-// JWT
+// -------------- JWT ----------------
 const fromCookies = (req) => {
   return req.cookies.token;
 };
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromExtractors([fromCookies]),
-  secretOrKey: env.TOKEN_SECRET,
+  secretOrKey: env.TOKEN_SECRET_JWT,
 };
 
 passport.use(

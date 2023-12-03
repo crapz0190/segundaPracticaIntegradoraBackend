@@ -13,7 +13,8 @@ const configEnv = {
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
   GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
-  TOKEN_SECRET: process.env.TOKEN_SECRET,
+  TOKEN_SECRET_JWT: process.env.TOKEN_SECRET_JWT,
+  TOKEN_SECRET_MONGO: process.env.TOKEN_SECRET_MONGO,
 };
 
 console.log(`NODE_ENV = ${configEnv.NODE_ENV}`);

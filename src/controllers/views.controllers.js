@@ -41,7 +41,7 @@ class ViewsControllers {
         return item;
       });
 
-      return res.render("products", {
+      res.render("products", {
         title: "Products | Handlebars",
         payload,
         totalPages,
@@ -121,9 +121,6 @@ class ViewsControllers {
   // Metodo GET para visualizar login
   login = (req, res) => {
     try {
-      if (req.user) {
-        return res.redirect("/products");
-      }
       return res.render("login", {
         title: "Login | Handlebars",
       });
@@ -134,9 +131,6 @@ class ViewsControllers {
 
   // Metodo GET para visualizar signup
   signup = (req, res) => {
-    if (req.user) {
-      return res.redirect("/products");
-    }
     try {
       return res.render("signup", {
         title: "Sign Up | Handlebars",

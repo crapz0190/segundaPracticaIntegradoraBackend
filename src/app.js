@@ -38,8 +38,9 @@ app.use(
     store: new MongoStore({
       mongoUrl: env.URI,
     }),
-    secret: "secretSession",
+    secret: env.TOKEN_SECRET_MONGO,
     cookie: { maxAge: 60000 },
+    // saveUninitialized: false,
   })
 );
 

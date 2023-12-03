@@ -1,6 +1,6 @@
 import { usersManager } from "../db/managers/usersManager.js";
 import { hashData } from "../utils.js";
-import { createAccessToken } from "../libs/jwt.js";
+import { generateToken } from "../libs/jwt.js";
 
 class SessionController {
   // Metodo GET permite desde un boton cerrar sesion
@@ -15,23 +15,24 @@ class SessionController {
   };
 
   // Metodo POST permite registrarse en la DB
-  //  createUser = async (req, res) => {
-  //   try {
-  //     return res.status(200).json({ message: "User created" });
-  //   } catch (e) {
-  //     return res.status(500).json({ status: "error", message: e.message });
-  //   }
-  // };
+  access = async (req, res) => {
+    try {
+      return res.redirect("/products");
+    } catch (e) {
+      return res.status(500).json({ status: "error", message: e.message });
+    }
+  };
 
   // Metodo POST permite el ingreso del usuario a su cuenta
   loginUser = (req, res) => {
     try {
       //jwt
       const { first_name, last_name, email, role } = req.user;
-      const token = createAccessToken({ first_name, last_name, email, role });
+      const token = generateToken({ first_name, last_name, email, role });
       res.cookie("token", token, { httpOnly: true });
-
-      return res.redirect("/api/sessions/current");
+      res.redirect("/api/sessions/current");
+      const user = req.user;
+      return user;
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
     }

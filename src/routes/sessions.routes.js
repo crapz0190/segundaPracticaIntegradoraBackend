@@ -8,11 +8,8 @@ const router = Router();
 router.get(
   "/current",
   passport.authenticate("current", { session: false }),
-  authMiddleware(["user"]),
-  (req, res) => {
-    const user = req.user;
-    return res.json({ message: user });
-  }
+  authMiddleware(["admin"]),
+  sessionController.access
 );
 
 // ruta GET permite desde un boton cerrar sesion
