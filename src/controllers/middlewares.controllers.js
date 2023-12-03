@@ -18,7 +18,6 @@ import { createServer } from "node:http";
 import { Server as SocketServer } from "socket.io";
 import { productsModel } from "../dao/models/products.model.js";
 import { productsManager } from "../dao/managers/productsManager.js";
-import { messagesManager } from "../dao/managers/messagesManager.js";
 import methodOverride from "method-override";
 
 class ServerConfig {
