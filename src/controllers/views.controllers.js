@@ -42,11 +42,7 @@ class ViewsControllers {
       return res.redirect("/login");
     }
 
-    const { first_name, email, cart } = req.user;
-
-    const idFound = await cartsManager.getById(cart);
-    const idCart = idFound._id;
-    // console.log("id see", idCart);
+    const { first_name, email } = req.user;
 
     try {
       const products = await productsManager.paginate(req.query);
@@ -76,7 +72,6 @@ class ViewsControllers {
         nextLink,
         first_name,
         email,
-        idCart,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -97,6 +92,9 @@ class ViewsControllers {
   // Metodo GET para mostrar detalles del producto seleccionado
   productDetail = async (req, res) => {
     const { pid } = req.params;
+    const cartFound = await cartsManager.getById(req.user.cart);
+    const idCart = cartFound._id;
+    // console.log("buscar carrito", idCart);
     try {
       const product = await productsManager.getById(pid);
 
@@ -106,6 +104,7 @@ class ViewsControllers {
       return res.render("productDetail", {
         title: "Details Products | Handlebars",
         _id,
+        idCart,
         title,
         description,
         price,
@@ -200,11 +199,22 @@ class ViewsControllers {
   };
 
   // Metodo GET para visualizar carrito de productos
-  productCart = (req, res) => {
-    // console.log(req.params);
-    res.render("productCart", {
-      title: "Product Cart | Handlebars",
-    });
+  productCart = async (req, res) => {
+    const { cid, pid } = req.params;
+    const quantity = req.body;
+    try {
+      const addProductToCart = await cartsManager.addProductsByCart(
+        cid,
+        pid,
+        quantity
+      );
+      console.log(addProductToCart);
+      res.render("productCart", {
+        title: "Product Cart | Handlebars",
+      });
+    } catch (e) {
+      return res.status(500).json({ status: "error", message: e.message });
+    }
   };
 }
 
