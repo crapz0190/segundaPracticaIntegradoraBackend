@@ -13,23 +13,35 @@
     <nav class="w-full h-14 flex items-center justify-around text-cyan-50">
       <span class="uppercase font-bold">Handlebars</span>
       <ul class="text-sm flex items-center justify-between gap-14">
+        {{#if roleUser}}
         <li class="uppercase pt-2 pb-2 px-4 text-center h-9"><a href="/products">Productos</a></li>
-        {{!-- {{if }} --}}
+        <li class="uppercase pt-2 pb-2 px-4 text-center h-9"><a href="/messages-form">mensajes</a></li>
+        <button
+          class="text-center text-white border border-slate-300 rounded-md bg-slate-900 cursor-pointer hover:bg-slate-600 duration-300"><a
+            class="inline-block w-32 h-10 px-2 py-2" href="/carts/{{cart}}">Cart</a></button>
+        {{/if}}
+        {{#if roleAdmin}}
+        <li class="uppercase pt-2 pb-2 px-4 text-center h-9"><a href="/products">Productos</a></li>
+        <li class="uppercase pt-2 pb-2 px-4 text-center h-9"><a href="/messages-form">mensajes</a></li>
         <li class="uppercase pt-2 pb-2 px-4 text-center h-9"><a href="/product-upload-form">Carga de
             productos</a></li>
         <li class="uppercase pt-2 pb-2 px-4 text-center h-9"><a href="/update-product">Actualizar
             productos</a></li>
-        <li class="uppercase pt-2 pb-2 px-4 text-center h-9"><a href="/messages-form">mensajes</a></li>
+        {{/if}}
 
       </ul>
     </nav>
 
+    {{#if isAuthenticated}}
     <button
       class="text-center text-white border border-slate-300 rounded-md bg-slate-900 cursor-pointer hover:bg-slate-600 duration-300"><a
         class="inline-block w-32 h-10 px-2 py-2" href="/login">Login</a></button>
     <button
       class="text-center text-white border border-slate-300 rounded-md bg-slate-900 cursor-pointer hover:bg-slate-600 duration-300"><a
         class="inline-block w-32 h-10 px-2 py-2" href="/signup">Sign Up</a></button>
+    {{/if}}
+
+
   </header>
 
   {{{body}}}

@@ -1,19 +1,22 @@
 <div class="border border-slate-500 w-2/6 p-2 mx-auto mt-20">
   <div class="p-5">
-    {{!-- {{#each thumbnails}}
-    <img class="w-full h-3/6 bg-cover" src="{{this}}" alt="imagen-1">
-    {{/each}} --}}
-
+    <ul>
+      {{#each thumbnails}}
+        <li class="inline-block">
+          <img class="w-32" src="{{this}}" alt="{{title}} Thumbnail">
+        </li>
+      {{/each}}
+    </ul>
     <h2 class="uppercase font-bold">{{ title }}</h2>
     <p>{{ description }}</p>
     <p class="font-bold">Precio: ${{ price }}</p>
     <p class="font-bold">Cantidad: {{ stock }}</p>
     <p class="font-bold">Categoría: {{ category }}</p>
   </div>
-  <div class="flex justify-center gap-10">
-    <a class="inline-block text-white text-center w-full h-14 border border-2 rounded-md p-2 duration-300 bg-red-900 hover:bg-slate-600"
+  <div class="flex flex-wrap justify-center gap-10">
+    <a class="text-white text-center w-full h-14 border border-2 rounded-md p-2 duration-300 bg-red-900 hover:bg-slate-600"
       href="/carts/{{idCart}}/product/{{_id}}">Agregar al Carrito</a>
-    <a class="border border-2 rounded p-1 text-sky-600 hover:text-sky-900 duration-300" href="/products">Volver al
+    <a class="text-white text-center w-full h-14 border border-2 rounded-md p-2 duration-300 bg-slate-900 hover:bg-slate-600" href="/products">Volver al
       inicio</a>
   </div>
 </div>

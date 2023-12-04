@@ -4,13 +4,31 @@ import { messagesManager } from "../dao/managers/messagesManager.js";
 import { cartsManager } from "../dao/managers/cartsManager.js";
 
 class ViewsControllers {
+  home = async (req, res) => {
+    try {
+      return res.render("layouts/main", {
+        title: "Home | Handlebars",
+      });
+    } catch (e) {
+      return res.status(500).json({ status: "error", message: e.message });
+    }
+  };
+
   // Metodo GET para visualizar mensages
   listMessages = async (req, res) => {
+    const { cart, role } = req.user;
+
+    const roleAdmin = role === "admin";
+    const roleUser = role === "user";
+
     try {
       const getMessages = await messagesManager.findAll();
       return res.render("messages", {
         title: "Messages | Handlebars",
         messages: getMessages,
+        cart,
+        roleAdmin,
+        roleUser,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -20,6 +38,10 @@ class ViewsControllers {
   // ruta GET para enviar actualizacion de los mensages
   renderEditMessage = async (req, res) => {
     const { mid } = req.params;
+    const { cart, role } = req.user;
+
+    const roleAdmin = role === "admin";
+    const roleUser = role === "user";
 
     try {
       const messages = await messagesManager.getById(mid);
@@ -30,6 +52,9 @@ class ViewsControllers {
         _id,
         email,
         description,
+        cart,
+        roleAdmin,
+        roleUser,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -42,7 +67,11 @@ class ViewsControllers {
       return res.redirect("/login");
     }
 
-    const { first_name, email } = req.user;
+    // console.log(req.user);
+    const { first_name, email, cart, role } = req.user;
+
+    const roleAdmin = role === "admin";
+    const roleUser = role === "user";
 
     try {
       const products = await productsManager.paginate(req.query);
@@ -56,9 +85,9 @@ class ViewsControllers {
         nextLink,
       } = products;
 
-      payload.map((item) => {
-        item.firstThumbnail = item.thumbnails[0];
-        return item;
+      payload.map((product) => {
+        product.firstThumbnail = `/images/${product.thumbnails[0]}`;
+        return product;
       });
 
       res.render("products", {
@@ -72,6 +101,9 @@ class ViewsControllers {
         nextLink,
         first_name,
         email,
+        cart,
+        roleAdmin,
+        roleUser,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -80,9 +112,16 @@ class ViewsControllers {
 
   // Metodo GET para mostrar formulario de carga de productos
   productsLoading = (req, res) => {
+    const { role } = req.user;
+
+    const roleAdmin = role === "admin";
+    const roleUser = role === "user";
+
     try {
       return res.render("formProducts", {
         title: "Upload products | Handlebars",
+        roleAdmin,
+        roleUser,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -94,12 +133,18 @@ class ViewsControllers {
     const { pid } = req.params;
     const cartFound = await cartsManager.getById(req.user.cart);
     const idCart = cartFound._id;
-    // console.log("buscar carrito", idCart);
+    const { cart, role } = req.user;
+
+    const roleAdmin = role === "admin";
+    const roleUser = role === "user";
+
     try {
       const product = await productsManager.getById(pid);
+      const thumbnailsData = product.thumbnails.map(
+        (thumbnail) => `/images/${thumbnail}`
+      );
 
-      const { _id, title, description, price, stock, category, thumbnails } =
-        product;
+      const { _id, title, description, price, stock, category } = product;
 
       return res.render("productDetail", {
         title: "Details Products | Handlebars",
@@ -110,7 +155,10 @@ class ViewsControllers {
         price,
         stock,
         category,
-        thumbnails,
+        thumbnails: thumbnailsData,
+        cart,
+        roleAdmin,
+        roleUser,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -119,6 +167,11 @@ class ViewsControllers {
 
   // Metodo GET para actualizar productos
   updateProduct = async (req, res) => {
+    const { role } = req.user;
+
+    const roleAdmin = role === "admin";
+    const roleUser = role === "user";
+
     try {
       const products = await productsManager.paginate(req.query);
       const { payload } = products;
@@ -136,6 +189,8 @@ class ViewsControllers {
       return res.render("updateProducts", {
         title: "Update products| Handlebars",
         payload,
+        roleAdmin,
+        roleUser,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -144,13 +199,17 @@ class ViewsControllers {
 
   // Metodo GET para visualizar login
   login = (req, res) => {
+    // console.log(req.user);
     if (req.session.passport) {
       return res.redirect("/products");
     }
 
+    const isAuthenticated = req.user === undefined;
+
     try {
       return res.render("login", {
         title: "Login | Handlebars",
+        isAuthenticated,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -199,18 +258,59 @@ class ViewsControllers {
   };
 
   // Metodo GET para visualizar carrito de productos
+  cart = async (req, res) => {
+    const { cid } = req.params;
+    const { cart, role } = req.user;
+
+    const roleAdmin = role === "admin";
+    const roleUser = role === "user";
+
+    try {
+      const cartFound = await cartsManager.getById(cid);
+
+      if (cartFound && cartFound.products) {
+        const productsData = cartFound.products.map((product) => {
+          const thumbnailsData = product.product.thumbnails.map((thumbnail) => {
+            return {
+              url: `/images/${thumbnail}`,
+            };
+          });
+          return {
+            id: product.product._id,
+            title: product.product.title,
+            price: product.product.price,
+            thumbnails: thumbnailsData,
+            quantity: product.quantity,
+          };
+        });
+
+        return res.render("cart", {
+          title: "Shopping Cart",
+          products: productsData,
+          cart,
+          roleAdmin,
+          roleUser,
+        });
+      } else {
+        return res.render("cart", {
+          title: "Shopping Cart",
+          products: [],
+        });
+      }
+    } catch (error) {
+      console.error("Error al obtener el carrito:", error);
+      return res.status(500).json({ status: "error", message: e.message });
+    }
+  };
+
+  // Metodo GET para agregar productos al carrito
   productCart = async (req, res) => {
     const { cid, pid } = req.params;
     const quantity = req.body;
     try {
-      const addProductToCart = await cartsManager.addProductsByCart(
-        cid,
-        pid,
-        quantity
-      );
-      console.log(addProductToCart);
-      res.render("productCart", {
-        title: "Product Cart | Handlebars",
+      await cartsManager.addProductsByCart(cid, pid, quantity);
+      return res.render("productCart", {
+        title: "Added Product | Handlebars",
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });

@@ -1,0 +1,22 @@
+<h1 class="mt-20">carrito</h1>
+
+{{#if products.length}}
+<ul>
+  {{#each products}}
+  <li>
+    <h2>{{title}}</h2>
+    <p>{{price}}</p>
+    <h3>Quantity: {{quantity}}</h3>
+    <ul>
+      {{#each thumbnails}}
+      <li class="w-20">
+        <img src="{{url}}" alt="Thumbnail">
+      </li>
+      {{/each}}
+    </ul>
+  </li>
+  {{/each}}
+</ul>
+{{else}}
+<p>No hay productos en el carrito.</p>
+{{/if}}
