@@ -141,12 +141,12 @@ class ProductController {
 
     try {
       const removeProduct = await productsManager.deleteOne(pid);
-      if (!removeProduct) {
+      if (removeProduct) {
+        return res.status(200).json({ status: "success", removeProduct });
+      } else {
         return res
           .status(500)
           .json({ status: "error", message: "Product removal failed" });
-      } else {
-        return res.status(200).json({ status: "success", removeProduct });
       }
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });

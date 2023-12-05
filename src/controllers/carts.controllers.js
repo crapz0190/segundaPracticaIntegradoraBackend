@@ -6,7 +6,7 @@ class CartController {
   allCarts = async (req, res) => {
     try {
       const allCarts = await cartsManager.getAll();
-      console.log(allCarts.length);
+      // console.log(allCarts.length);
       if (allCarts.length === 0) {
         return res
           .status(404)
@@ -56,6 +56,7 @@ class CartController {
   updateCart = async (req, res) => {
     const { cid, pid } = req.params;
     const { quantity } = req.body;
+    // console.log("quantity-1", +quantity);
 
     if (typeof cid !== "string" || typeof pid !== "string") {
       return res
@@ -66,7 +67,7 @@ class CartController {
       const updateCart = await cartsManager.addProductsByCart(
         cid,
         pid,
-        quantity
+        +quantity
       );
       return res.status(200).json({ status: "success", payload: updateCart });
     } catch (e) {
@@ -94,6 +95,29 @@ class CartController {
       } else {
         return res.status(200).json({ status: "success", payload: removeCart });
       }
+    } catch (e) {
+      return res.status(500).json({ status: "error", error: e.message });
+    }
+  };
+
+  // Metodo DELETE para eliminar un  producto del carrito
+  removeProductByCart = async (req, res) => {
+    const { cid, pid } = req.params;
+
+    if (typeof cid !== "string" || typeof pid !== "string") {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Invalid input data" });
+    }
+    try {
+      const removeProductByCart = await cartsManager.deleteProductByCart(
+        cid,
+        pid
+      );
+      return res.status(200).json({
+        status: "Product removed from cart",
+        payload: removeProductByCart,
+      });
     } catch (e) {
       return res.status(500).json({ status: "error", error: e.message });
     }

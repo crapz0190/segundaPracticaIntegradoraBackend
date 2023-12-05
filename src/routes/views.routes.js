@@ -21,9 +21,6 @@ router.get("/error", viewController.failureRedirect);
 // ruta GET para mostrar carrito
 router.get("/carts/:cid", viewController.cart);
 
-// ruta GET para agregar productos al carrito
-router.get("/carts/:cid/product/:pid", viewController.productCart);
-
 // ruta GET para mostrar productos
 router.get("/products", viewController.listProducts);
 

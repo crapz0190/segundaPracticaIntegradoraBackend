@@ -67,7 +67,6 @@ class ViewsControllers {
       return res.redirect("/login");
     }
 
-    // console.log(req.user);
     const { first_name, email, cart, role } = req.user;
 
     const roleAdmin = role === "admin";
@@ -199,7 +198,6 @@ class ViewsControllers {
 
   // Metodo GET para visualizar login
   login = (req, res) => {
-    // console.log(req.user);
     if (req.session.passport) {
       return res.redirect("/products");
     }
@@ -222,9 +220,12 @@ class ViewsControllers {
       return res.redirect("/products");
     }
 
+    const isAuthenticated = req.user === undefined;
+
     try {
       return res.render("signup", {
         title: "Sign Up | Handlebars",
+        isAuthenticated,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -233,9 +234,12 @@ class ViewsControllers {
 
   // Metodo GET para restaurar contraseña
   resetPassword = (req, res) => {
+    const isAuthenticated = req.user === undefined;
+
     try {
       return res.render("restore", {
         title: "Restore Password | Handlebars",
+        isAuthenticated,
       });
     } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
@@ -244,11 +248,13 @@ class ViewsControllers {
 
   // Metodo GET para mostrar error
   failureRedirect = (req, res) => {
-    // console.log("sessions", req);
+    const isAuthenticated = req.user === undefined;
+
     const message = req.session.messages[0];
     res.render("error", {
       title: "Error | Handlebars",
       message: message,
+      isAuthenticated,
     });
   };
 
@@ -259,8 +265,12 @@ class ViewsControllers {
 
   // Metodo GET para visualizar carrito de productos
   cart = async (req, res) => {
+    if (!req.session.passport) {
+      return res.redirect("/login");
+    }
+
     const { cid } = req.params;
-    const { cart, role } = req.user;
+    const { role } = req.user;
 
     const roleAdmin = role === "admin";
     const roleUser = role === "user";
@@ -270,16 +280,24 @@ class ViewsControllers {
 
       if (cartFound && cartFound.products) {
         const productsData = cartFound.products.map((product) => {
-          const thumbnailsData = product.product.thumbnails.map((thumbnail) => {
-            return {
-              url: `/images/${thumbnail}`,
-            };
-          });
+          const idCart = cartFound._id;
+          // console.log("isCart", idCart);
+          // const thumbnailsData = product.product.thumbnails.map((thumbnail) => {
+          //   return {
+          //     url: `/images/${thumbnail}`,
+          //   };
+          // });
+          const thumbnailData =
+            product.product.thumbnails.length > 0
+              ? `/images/${product.product.thumbnails[0]}`
+              : "/default-image.jpg";
+
           return {
+            idCart: idCart,
             id: product.product._id,
             title: product.product.title,
             price: product.product.price,
-            thumbnails: thumbnailsData,
+            thumbnail: thumbnailData,
             quantity: product.quantity,
           };
         });
@@ -287,7 +305,6 @@ class ViewsControllers {
         return res.render("cart", {
           title: "Shopping Cart",
           products: productsData,
-          cart,
           roleAdmin,
           roleUser,
         });
@@ -299,20 +316,6 @@ class ViewsControllers {
       }
     } catch (error) {
       console.error("Error al obtener el carrito:", error);
-      return res.status(500).json({ status: "error", message: e.message });
-    }
-  };
-
-  // Metodo GET para agregar productos al carrito
-  productCart = async (req, res) => {
-    const { cid, pid } = req.params;
-    const quantity = req.body;
-    try {
-      await cartsManager.addProductsByCart(cid, pid, quantity);
-      return res.render("productCart", {
-        title: "Added Product | Handlebars",
-      });
-    } catch (e) {
       return res.status(500).json({ status: "error", message: e.message });
     }
   };

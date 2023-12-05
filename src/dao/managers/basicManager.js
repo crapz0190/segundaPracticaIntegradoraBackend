@@ -30,8 +30,10 @@ export default class BasicManager {
     }
   }
   async updateOne(id, obj) {
+    console.log("Intentando eliminar producto con ID:", id);
     try {
       const response = await this.model.findByIdAndUpdate(id, obj);
+      console.log("Producto eliminado:", response);
       return response;
     } catch (error) {
       console.error(error);
@@ -43,6 +45,7 @@ export default class BasicManager {
       return response;
     } catch (error) {
       console.error(error);
+      throw new Error("Error al eliminar el documento");
     }
   }
 }

@@ -18,4 +18,7 @@ router.put("/:cid/product/:pid", cartController.updateCart);
 // ruta DELETE para eliminar un carrito
 router.delete("/:cid", cartController.removeCart);
 
+// ruta DELETE para eliminar un producto del carrito
+router.delete("/:cid/product/:pid", cartController.removeProductByCart);
+
 export default router;

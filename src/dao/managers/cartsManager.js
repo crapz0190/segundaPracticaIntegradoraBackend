@@ -17,18 +17,35 @@ class CarsManager extends BasicManager {
   }
 
   async addProductsByCart(cid, pid, quantity) {
+    // console.log("quantity-2", quantity);
     try {
       const cart = await cartsModel.findById(cid);
-      const founfIndex = cart.products.findIndex((item) =>
+      const foundIndex = cart.products.findIndex((item) =>
         item.product.equals(pid)
       );
-      console.log(founfIndex);
-      if (founfIndex === -1) {
-        cart.products.push({ product: pid, quantity: 1 });
+      if (foundIndex === -1) {
+        cart.products.push({ product: pid, quantity: quantity });
       } else {
-        cart.products[founfIndex].quantity = quantity;
+        cart.products[foundIndex].quantity = quantity;
       }
       return cart.save();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async deleteProductByCart(cid, pid) {
+    try {
+      const cart = await cartsModel.findById(cid);
+      const foundIndex = cart.products.findIndex((item) =>
+        item.product.equals(pid)
+      );
+      if (foundIndex !== -1) {
+        cart.products.splice(foundIndex, 1);
+        await cart.save();
+      } else {
+        console.error("Producto no encontrado en el carrito");
+      }
     } catch (error) {
       console.error(error);
     }
